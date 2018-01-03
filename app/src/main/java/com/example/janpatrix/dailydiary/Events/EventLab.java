@@ -3,7 +3,9 @@ package com.example.janpatrix.dailydiary.Events;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.janpatrix.dailydiary.Database.EventBaseHelper;
 import com.example.janpatrix.dailydiary.Database.EventCursorWrapper;
@@ -40,6 +42,14 @@ public class EventLab {
         }
 
         return mEventLab;
+    }
+
+    public void deleteDatabaseItems(){
+        try {
+            mDatabase.execSQL("DELETE FROM " + EventTable.NAME);
+        } catch (SQLException e) {
+            Log.d("SQL", e.toString());
+        }
     }
 
     public List<EventObject> getEvents(){

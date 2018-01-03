@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.janpatrix.dailydiary.Events.EventLab;
 import com.example.janpatrix.dailydiary.R;
@@ -26,28 +27,40 @@ public class CalendarActivity extends AppCompatActivity {
     private ImageView nextDay;
     private TextView currentDate;
     private Calendar calendar = Calendar.getInstance();
-    private Calendar eventCalendar = Calendar.getInstance();
+    private Calendar fromCalendar = Calendar.getInstance();
+    private Calendar toCalendar = Calendar.getInstance();
     private RelativeLayout mLayout;
     private int eventIndex;
     private EventLab eventLab;
     private EventObject event1;
     private EventObject event2;
+    private EventObject event3;
+    private EventObject event4;
+    private EventObject event5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
-        eventCalendar.add(Calendar.HOUR_OF_DAY, 1);
+        fromCalendar.add(Calendar.HOUR_OF_DAY, 1);
+        toCalendar.add(Calendar.HOUR_OF_DAY, 2);
         eventLab = EventLab.get(this);
-        event1 = new EventObject(1, "Cool message", calendar.getTime(), eventCalendar.getTime());
+        eventLab.deleteDatabaseItems();
 
-        eventCalendar.add(Calendar.HOUR_OF_DAY, 3);
+        event1 = new EventObject(1, "Cool message", fromCalendar.getTime(), toCalendar.getTime());
+        event2 = new EventObject(2, "HOT message", fromCalendar.getTime(), toCalendar.getTime());
+        event3 = new EventObject(2, "Mega message", fromCalendar.getTime(), toCalendar.getTime());
+        event4 = new EventObject(2, "Giga message", fromCalendar.getTime(), toCalendar.getTime());
+        event5 = new EventObject(2, "Omega message", fromCalendar.getTime(), toCalendar.getTime());
 
-        event2 = new EventObject(2, "HOT message", calendar.getTime(), eventCalendar.getTime());
 
         eventLab.addEvent(event1);
         eventLab.addEvent(event2);
+        eventLab.addEvent(event3);
+        eventLab.addEvent(event4);
+        eventLab.addEvent(event5);
+
 
         mLayout = findViewById(R.id.left_event_column);
         eventIndex = mLayout.getChildCount();
@@ -95,6 +108,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void displayDailyEvents(){
+        int count = 0;
         Date calendarDate = calendar.getTime();
         List<EventObject> dailyEvents = eventLab.getEvents();
         for(EventObject event : dailyEvents){
@@ -102,8 +116,9 @@ public class CalendarActivity extends AppCompatActivity {
             Date endDate = event.getEnd();
             String eventMessage = event.getMessage();
             int eventBlockHeight = getEventTimeFrame(eventDate, endDate);
-            Log.d("TEST", "Height " + eventBlockHeight);
-            displayEventSection(eventDate, eventBlockHeight, eventMessage);
+            Log.d("TEST", "XCount: " + count);
+            displayEventSection(eventDate, eventBlockHeight, eventMessage, count);
+            count++;
         }
     }
 
@@ -117,7 +132,7 @@ public class CalendarActivity extends AppCompatActivity {
         return (hours * 60) + ((minutes * 60) / 100);
     }
 
-    private void displayEventSection(Date eventDate, int height, String message){
+    private void displayEventSection(Date eventDate, int height, String message, int count){
         SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         String displayValue = timeFormatter.format(eventDate);
         String[]hourMinutes = displayValue.split(":");
@@ -127,22 +142,38 @@ public class CalendarActivity extends AppCompatActivity {
         Log.d("Test", "Minutes value " + minutes);
         int topViewMargin = (hours * 60) + ((minutes * 60) / 100);
         Log.d("Test", "Margin top " + topViewMargin);
-        createEventView(topViewMargin,height, message);
+        createEventView(topViewMargin,height, message, count);
     }
 
-    private void createEventView(int topMargin, int height, String message){
+    private void createEventView(int topMargin, int height, final String message, int count){
         TextView mEventView = new TextView(CalendarActivity.this);
         RelativeLayout.LayoutParams lParam = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lParam.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         lParam.topMargin = topMargin * 2;
-        lParam.leftMargin = 24;
+        lParam.leftMargin = 24 + (count * height * 5);
+
         mEventView.setLayoutParams(lParam);
         mEventView.setPadding(24, 0, 24, 0);
         mEventView.setHeight(height * 2);
+        mEventView.setWidth(height * 5);
         mEventView.setGravity(0x11);
         mEventView.setTextColor(Color.parseColor("#ffffff"));
         mEventView.setText(message);
-        mEventView.setBackgroundColor(Color.parseColor("#3F51B5"));
+        if (count == 0)
+            mEventView.setBackgroundColor(Color.parseColor("#3F51B5"));
+        else if(count == 1)
+            mEventView.setBackgroundColor(Color.parseColor("#FF4081"));
+        else
+            mEventView.setBackgroundColor(Color.parseColor("#aaaaaa"));
+
         mLayout.addView(mEventView, eventIndex - 1);
+
+        mEventView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 }
