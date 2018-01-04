@@ -3,6 +3,10 @@ package com.example.janpatrix.dailydiary.Activities;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.janpatrix.dailydiary.Adapter.RowAdapter;
 import com.example.janpatrix.dailydiary.Events.EventLab;
 import com.example.janpatrix.dailydiary.R;
 
@@ -41,18 +46,19 @@ public class CalendarActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar);
+        //setContentView(R.layout.activity_calendar);
+        setContentView(R.layout.activity_card);
 
         fromCalendar.add(Calendar.HOUR_OF_DAY, 1);
         toCalendar.add(Calendar.HOUR_OF_DAY, 2);
         eventLab = EventLab.get(this);
         eventLab.deleteDatabaseItems();
 
-        event1 = new EventObject(1, "Cool message", fromCalendar.getTime(), toCalendar.getTime());
-        event2 = new EventObject(2, "HOT message", fromCalendar.getTime(), toCalendar.getTime());
-        event3 = new EventObject(2, "Mega message", fromCalendar.getTime(), toCalendar.getTime());
-        event4 = new EventObject(2, "Giga message", fromCalendar.getTime(), toCalendar.getTime());
-        event5 = new EventObject(2, "Omega message", fromCalendar.getTime(), toCalendar.getTime());
+        event1 = new EventObject(1, "Cool message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.ITEM_TYPE);
+        event2 = new EventObject(2, "HOT message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.EVENT_TYPE);
+        event3 = new EventObject(2, "Mega message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.EVENT_TYPE);
+        event4 = new EventObject(2, "Giga message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.ITEM_TYPE);
+        event5 = new EventObject(2, "Omega message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.EVENT_TYPE);
 
 
         eventLab.addEvent(event1);
@@ -61,6 +67,16 @@ public class CalendarActivity extends AppCompatActivity {
         eventLab.addEvent(event4);
         eventLab.addEvent(event5);
 
+        /** Recycler View **/
+        RowAdapter adapter = new RowAdapter(eventLab.getEvents());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, OrientationHelper.VERTICAL, false);
+        RecyclerView mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(adapter);
+
+
+        /**Calendar View
 
         mLayout = findViewById(R.id.left_event_column);
         eventIndex = mLayout.getChildCount();
@@ -85,6 +101,8 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
         nextDay = findViewById(R.id.next_day);
+         **/
+
 
     }
 
@@ -146,6 +164,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void createEventView(int topMargin, int height, final String message, int count){
+
         TextView mEventView = new TextView(CalendarActivity.this);
         RelativeLayout.LayoutParams lParam = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lParam.addRule(RelativeLayout.ALIGN_PARENT_TOP);

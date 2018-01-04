@@ -8,22 +8,21 @@ import java.util.Date;
 
 public class EventObject {
 
+    public static final int ITEM_TYPE = 0;
+    public static final int EVENT_TYPE = 1;
+
     private int mId;
     private String mMessage;
     private Date mDate;
     private Date mEnd;
+    private int mType;
 
-    public EventObject(String message, Date date, Date end) {
-        mMessage = message;
-        mDate = date;
-        mEnd = end;
-    }
-
-    public EventObject(int id, String message, Date date, Date end){
+    public EventObject(int id, String message, Date date, Date end, int type){
         mId = id;
         mMessage = message;
         mDate = date;
         mEnd = end;
+        mType = type;
     }
 
     public Date getEnd(){
@@ -40,5 +39,9 @@ public class EventObject {
 
     public int getID(){
         return mId;
+    }
+
+    public int getType(){
+        return mType;
     }
 }

@@ -77,6 +77,7 @@ public class EventLab {
         values.put(EventTable.Cols.MESSAGE, event.getMessage());
         values.put(EventTable.Cols.DATE, event.getDate().getTime());
         values.put(EventTable.Cols.END, event.getEnd().getTime());
+        values.put(EventTable.Cols.TYPE, event.getType());
 
         return values;
     }

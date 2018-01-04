@@ -23,8 +23,9 @@ public class EventCursorWrapper extends CursorWrapper{
         String message = getString(getColumnIndex(EventDbSchema.EventTable.Cols.MESSAGE));
         long date = getLong(getColumnIndex(EventDbSchema.EventTable.Cols.DATE));
         long end = getLong(getColumnIndex(EventDbSchema.EventTable.Cols.END));
+        int type = getInt(getColumnIndex(EventDbSchema.EventTable.Cols.TYPE));
 
-        EventObject event = new EventObject(id, message, new Date(date), new Date(end));
+        EventObject event = new EventObject(id, message, new Date(date), new Date(end), type);
 
         return event;
     }

@@ -16,6 +16,7 @@ public class EventDbSchema {
             public static final String MESSAGE = "message";
             public static final String DATE = "date";
             public static final String END = "end";
+            public static final String TYPE = "type";
         }
     }
 }
