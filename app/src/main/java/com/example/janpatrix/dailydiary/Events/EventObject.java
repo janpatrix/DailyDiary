@@ -10,6 +10,7 @@ public class EventObject {
 
     public static final int ITEM_TYPE = 0;
     public static final int EVENT_TYPE = 1;
+    public static final int DATE_TYPE = 2;
 
     private int mId;
     private String mMessage;

@@ -6,14 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.janpatrix.dailydiary.Activities.CalendarActivity;
 import com.example.janpatrix.dailydiary.Events.EventObject;
 import com.example.janpatrix.dailydiary.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
+import static com.example.janpatrix.dailydiary.Tools.helper.convertDateToString;
 
 /**
  * Created by patrickgross on 04.01.18.
@@ -41,6 +39,10 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case EventObject.EVENT_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event, parent, false);
                 return new EventViewHolder(view);
+
+            case EventObject.DATE_TYPE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.date, parent, false);
+                return new DateViewHolder(view);
         }
 
         return null;
@@ -59,6 +61,8 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     ((EventViewHolder) holder).mTitle.setText(object.getMessage());
                     ((EventViewHolder) holder).mDescription.setText(convertDateToString(object.getDate()));
                     break;
+                case EventObject.DATE_TYPE:
+                    ((DateViewHolder) holder).mTitle.setText(convertDateToString(object.getDate()));
             }
         }
     }
@@ -103,8 +107,13 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private String convertDateToString(Date mDate){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH);
-        return dateFormat.format(mDate);
+    public static class DateViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView mTitle;
+
+        public DateViewHolder(View dateView) {
+            super(dateView);
+            mTitle = itemView.findViewById(R.id.tv_date_title);
+        }
     }
 }

@@ -3,10 +3,7 @@ package com.example.janpatrix.dailydiary.Activities;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
-import android.support.v7.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,7 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.janpatrix.dailydiary.Adapter.RowAdapter;
 import com.example.janpatrix.dailydiary.Events.EventLab;
 import com.example.janpatrix.dailydiary.R;
 
@@ -23,8 +19,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import com.example.janpatrix.dailydiary.Events.EventObject;
+
 import java.util.List;
 import java.util.Locale;
+
+import static com.example.janpatrix.dailydiary.Tools.helper.convertDateToString;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -32,51 +31,13 @@ public class CalendarActivity extends AppCompatActivity {
     private ImageView nextDay;
     private TextView currentDate;
     private Calendar calendar = Calendar.getInstance();
-    private Calendar fromCalendar = Calendar.getInstance();
-    private Calendar toCalendar = Calendar.getInstance();
     private RelativeLayout mLayout;
     private int eventIndex;
-    private EventLab eventLab;
-    private EventObject event1;
-    private EventObject event2;
-    private EventObject event3;
-    private EventObject event4;
-    private EventObject event5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_calendar);
-        setContentView(R.layout.activity_card);
-
-        fromCalendar.add(Calendar.HOUR_OF_DAY, 1);
-        toCalendar.add(Calendar.HOUR_OF_DAY, 2);
-        eventLab = EventLab.get(this);
-        eventLab.deleteDatabaseItems();
-
-        event1 = new EventObject(1, "Cool message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.ITEM_TYPE);
-        event2 = new EventObject(2, "HOT message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.EVENT_TYPE);
-        event3 = new EventObject(2, "Mega message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.EVENT_TYPE);
-        event4 = new EventObject(2, "Giga message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.ITEM_TYPE);
-        event5 = new EventObject(2, "Omega message", fromCalendar.getTime(), toCalendar.getTime(), EventObject.EVENT_TYPE);
-
-
-        eventLab.addEvent(event1);
-        eventLab.addEvent(event2);
-        eventLab.addEvent(event3);
-        eventLab.addEvent(event4);
-        eventLab.addEvent(event5);
-
-        /** Recycler View **/
-        RowAdapter adapter = new RowAdapter(eventLab.getEvents());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, OrientationHelper.VERTICAL, false);
-        RecyclerView mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.setAdapter(adapter);
-
-
-        /**Calendar View
+        setContentView(R.layout.activity_calendar);
 
         mLayout = findViewById(R.id.left_event_column);
         eventIndex = mLayout.getChildCount();
@@ -101,8 +62,6 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
         nextDay = findViewById(R.id.next_day);
-         **/
-
 
     }
 
@@ -120,13 +79,10 @@ public class CalendarActivity extends AppCompatActivity {
         displayDailyEvents();
     }
 
-    private String convertDateToString(Date mDate){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH);
-        return dateFormat.format(mDate);
-    }
-
     private void displayDailyEvents(){
         int count = 0;
+        EventLab eventLab = EventLab.get(this);
+
         Date calendarDate = calendar.getTime();
         List<EventObject> dailyEvents = eventLab.getEvents();
         for(EventObject event : dailyEvents){

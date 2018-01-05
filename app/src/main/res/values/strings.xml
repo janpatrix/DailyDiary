@@ -28,4 +28,7 @@
     <string name="time_24pm">24 pm</string>
     <string name="birth_day">I am going to birthday party</string>
     <string name="current_day_date">8 October, 2016</string>
+
+    <string name="menu_calendar_view">Calendar</string>
+    <string name ="menu_card_view">Card View</string>
 </resources>
