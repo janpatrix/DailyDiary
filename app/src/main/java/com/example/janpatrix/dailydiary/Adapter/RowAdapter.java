@@ -8,10 +8,10 @@ import android.widget.TextView;
 
 import com.example.janpatrix.dailydiary.Events.EventObject;
 import com.example.janpatrix.dailydiary.R;
+import com.example.janpatrix.dailydiary.RoomEvents.Card;
 
 import java.util.List;
 
-import static com.example.janpatrix.dailydiary.Tools.helper.convertDateToString;
 
 /**
  * Created by patrickgross on 04.01.18.
@@ -19,9 +19,9 @@ import static com.example.janpatrix.dailydiary.Tools.helper.convertDateToString;
 
 public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<EventObject> mList;
+    private List<Card> mList;
 
-    public RowAdapter(List<EventObject> list){
+    public RowAdapter(List<Card> list){
         mList = list;
     }
 
@@ -32,17 +32,13 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         switch (viewType) {
 
-            case EventObject.ITEM_TYPE:
+            case Card.ITEM_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
                 return new ItemViewHolder(view);
 
-            case EventObject.EVENT_TYPE:
+            case Card.EVENT_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event, parent, false);
                 return new EventViewHolder(view);
-
-            case EventObject.DATE_TYPE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.date, parent, false);
-                return new DateViewHolder(view);
         }
 
         return null;
@@ -51,18 +47,17 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        EventObject object = mList.get(position);
+        Card object = mList.get(position);
         if (object != null) {
             switch(object.getType()) {
-                case EventObject.ITEM_TYPE:
+                case Card.ITEM_TYPE:
                     ((ItemViewHolder) holder).mTitle.setText(object.getMessage());
                     break;
-                case EventObject.EVENT_TYPE:
+
+                case Card.EVENT_TYPE:
                     ((EventViewHolder) holder).mTitle.setText(object.getMessage());
-                    ((EventViewHolder) holder).mDescription.setText(convertDateToString(object.getDate()));
+                    ((EventViewHolder) holder).mDescription.setText("" + object.getDate());
                     break;
-                case EventObject.DATE_TYPE:
-                    ((DateViewHolder) holder).mTitle.setText(convertDateToString(object.getDate()));
             }
         }
     }
@@ -77,7 +72,7 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
         if (mList != null) {
-            EventObject object = mList.get(position);
+            Card object = mList.get(position);
             if (object != null) {
                 return object.getType();
             }
@@ -85,7 +80,7 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return 0;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTitle;
 
@@ -95,7 +90,7 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public static class EventViewHolder extends  RecyclerView.ViewHolder {
+    public class EventViewHolder extends  RecyclerView.ViewHolder {
 
         private TextView mTitle;
         private TextView mDescription;
@@ -104,16 +99,6 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             mTitle = itemView.findViewById(R.id.tv_event_title);
             mDescription = itemView.findViewById(R.id.tv_event_description);
-        }
-    }
-
-    public static class DateViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView mTitle;
-
-        public DateViewHolder(View dateView) {
-            super(dateView);
-            mTitle = itemView.findViewById(R.id.tv_date_title);
         }
     }
 }

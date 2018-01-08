@@ -11,7 +11,7 @@ import java.util.Locale;
 public class helper {
 
     public static String convertDateToString(Date mDate){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.ENGLISH);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd", Locale.ENGLISH);
         return dateFormat.format(mDate);
     }
 }

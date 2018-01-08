@@ -1,10 +1,10 @@
 package com.example.janpatrix.dailydiary.Activities;
 
+import android.arch.persistence.room.Room;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,13 +12,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.janpatrix.dailydiary.Events.EventLab;
 import com.example.janpatrix.dailydiary.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import com.example.janpatrix.dailydiary.Events.EventObject;
+import com.example.janpatrix.dailydiary.RoomEvents.AppDatabase;
+import com.example.janpatrix.dailydiary.RoomEvents.Card;
 
 import java.util.List;
 import java.util.Locale;
@@ -33,11 +32,14 @@ public class CalendarActivity extends AppCompatActivity {
     private Calendar calendar = Calendar.getInstance();
     private RelativeLayout mLayout;
     private int eventIndex;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        db = Room.databaseBuilder(this, AppDatabase.class, "database-name").allowMainThreadQueries().build();
 
         mLayout = findViewById(R.id.left_event_column);
         eventIndex = mLayout.getChildCount();
@@ -46,7 +48,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         displayDailyEvents();
 
-        nextDay = findViewById(R.id.next_day);
+        nextDay = findViewById(R.id.btn_calendar_next);
         nextDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,15 +56,13 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        previousDay = findViewById(R.id.previous_day);
+        previousDay = findViewById(R.id.btn_calendar_prev);
         previousDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 previousCalendarDate();
             }
         });
-        nextDay = findViewById(R.id.next_day);
-
     }
 
     private void previousCalendarDate(){
@@ -81,41 +81,24 @@ public class CalendarActivity extends AppCompatActivity {
 
     private void displayDailyEvents(){
         int count = 0;
-        EventLab eventLab = EventLab.get(this);
 
-        Date calendarDate = calendar.getTime();
-        List<EventObject> dailyEvents = eventLab.getEvents();
-        for(EventObject event : dailyEvents){
-            Date eventDate = event.getDate();
-            Date endDate = event.getEnd();
-            String eventMessage = event.getMessage();
-            int eventBlockHeight = getEventTimeFrame(eventDate, endDate);
-            Log.d("TEST", "XCount: " + count);
-            displayEventSection(eventDate, eventBlockHeight, eventMessage, count);
+        List<Card> cards = db.cardDao().getAll();
+        for(Card card : cards){
+            long eventDate = card.getDate();
+
+            String eventMessage = card.getMessage();
+            displayEventSection(eventDate, 100, eventMessage, count);
             count++;
         }
     }
 
-    private int getEventTimeFrame(Date start, Date end){
-        long timeDifference = end.getTime() - start.getTime();
-        Calendar mCal = Calendar.getInstance();
-        mCal.setTimeInMillis(timeDifference);
-        int hours = mCal.get(Calendar.HOUR);
-        int minutes = mCal.get(Calendar.MINUTE);
-
-        return (hours * 60) + ((minutes * 60) / 100);
-    }
-
-    private void displayEventSection(Date eventDate, int height, String message, int count){
+    private void displayEventSection(Long eventDate, int height, String message, int count){
         SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         String displayValue = timeFormatter.format(eventDate);
         String[]hourMinutes = displayValue.split(":");
         int hours = Integer.parseInt(hourMinutes[0]);
         int minutes = Integer.parseInt(hourMinutes[1]);
-        Log.d("Test", "Hour value " + hours);
-        Log.d("Test", "Minutes value " + minutes);
         int topViewMargin = (hours * 60) + ((minutes * 60) / 100);
-        Log.d("Test", "Margin top " + topViewMargin);
         createEventView(topViewMargin,height, message, count);
     }
 
