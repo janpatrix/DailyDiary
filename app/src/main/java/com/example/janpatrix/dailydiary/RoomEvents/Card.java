@@ -7,7 +7,6 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -33,11 +32,19 @@ public class Card {
     @ColumnInfo(name = "type")
     private int mType;
 
+    @Ignore
     public Card(String message, int type){
         Calendar cal = Calendar.getInstance();
         mUid = UUID.randomUUID().toString();
         mMessage = message;
         mDate = cal.getTimeInMillis();
+        mType = type;
+    }
+
+    public Card(long date, String message, int type){
+        mUid = UUID.randomUUID().toString();
+        mMessage = message;
+        mDate = date;
         mType = type;
     }
 

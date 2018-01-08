@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.janpatrix.dailydiary.Events.EventObject;
 import com.example.janpatrix.dailydiary.R;
 import com.example.janpatrix.dailydiary.RoomEvents.Card;
 
+import java.util.Date;
 import java.util.List;
+
+import static com.example.janpatrix.dailydiary.Tools.helper.convertDateToString;
 
 
 /**
@@ -56,7 +58,7 @@ public class RowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 case Card.EVENT_TYPE:
                     ((EventViewHolder) holder).mTitle.setText(object.getMessage());
-                    ((EventViewHolder) holder).mDescription.setText("" + object.getDate());
+                    ((EventViewHolder) holder).mDescription.setText("" + convertDateToString(new Date(object.getDate())));
                     break;
             }
         }

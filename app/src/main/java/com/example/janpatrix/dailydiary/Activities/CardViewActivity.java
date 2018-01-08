@@ -17,8 +17,12 @@ import com.example.janpatrix.dailydiary.R;
 import com.example.janpatrix.dailydiary.RoomEvents.AppDatabase;
 
 import static com.example.janpatrix.dailydiary.Tools.helper.convertDateToString;
+import static com.example.janpatrix.dailydiary.Tools.helper.getDateDay;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -27,7 +31,6 @@ import java.util.Calendar;
 
 public class CardViewActivity extends AppCompatActivity {
 
-    private EventLab eventLab;
     private ImageView prev;
     private ImageView next;
     private TextView tv_date;
@@ -48,7 +51,9 @@ public class CardViewActivity extends AppCompatActivity {
 
         final AppDatabase db = Room.databaseBuilder(this, AppDatabase.class, "database-name").allowMainThreadQueries().build();
 
-        adapter = new RowAdapter(db.cardDao().getAll());
+        long[] dayList = getDateDay(cal.getTimeInMillis());
+        adapter = new RowAdapter(db.cardDao().queryDate(dayList[0], dayList[1]));
+
         linearLayoutManager = new LinearLayoutManager(this, OrientationHelper.VERTICAL, false);
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -60,7 +65,10 @@ public class CardViewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 cal.add(Calendar.DAY_OF_MONTH, -1);
                 tv_date.setText(convertDateToString(cal.getTime()));
-                adapter = new RowAdapter(db.cardDao().getAll());
+
+                long[] dayList = getDateDay(cal.getTimeInMillis());
+                adapter = new RowAdapter(db.cardDao().queryDate(dayList[0], dayList[1]));
+
                 mRecyclerView.setAdapter(adapter);
             }
         });
@@ -70,7 +78,10 @@ public class CardViewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 cal.add(Calendar.DAY_OF_MONTH, 1);
                 tv_date.setText(convertDateToString(cal.getTime()));
-                adapter = new RowAdapter(db.cardDao().getAll());
+
+                long[] dayList = getDateDay(cal.getTimeInMillis());
+                adapter = new RowAdapter(db.cardDao().queryDate(dayList[0], dayList[1]));
+
                 mRecyclerView.setAdapter(adapter);
             }
         });

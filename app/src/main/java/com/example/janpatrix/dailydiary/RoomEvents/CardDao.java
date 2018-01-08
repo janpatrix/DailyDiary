@@ -20,6 +20,9 @@ public interface CardDao {
     @Query("DELETE FROM card")
     void deleteAll();
 
+    @Query("SELECT * FROM card WHERE date BETWEEN :dayst AND :dayet")
+    List<Card> queryDate(long dayst, long dayet);
+
     @Insert
     void insertAll(List<Card> cards);
 
